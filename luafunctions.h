@@ -46,7 +46,7 @@ int TimeTrial_GetNitroType(void* a1) {
 }
 
 int TimeTrial_WasLastRaceTimeTrial(void* a1) {
-	lua_pushnumber(a1, bLastRaceWasTimeTrial);
+	lua_pushboolean(a1, bLastRaceWasTimeTrial);
 	bLastRaceWasTimeTrial = false;
 	return 1;
 }
