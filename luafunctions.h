@@ -1,5 +1,3 @@
-bool bLastRaceWasTimeTrial = false;
-
 int TimeTrial_SetEnabled(void* a1) {
 	bool on = luaL_checknumber(a1, 1);
 	if (on) {

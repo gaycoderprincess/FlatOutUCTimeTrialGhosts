@@ -177,6 +177,9 @@ void UninitTimeTrials() {
 
 	// revert prop patches
 	EnableProps();
+
+	// revert ghost visuals
+	SetGhostVisuals(true);
 }
 
 #include "luafunctions.h"
