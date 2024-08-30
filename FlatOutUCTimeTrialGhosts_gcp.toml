@@ -10,16 +10,4 @@ show_best_times = true					# Displays the best lap times you've ever achieved fo
 show_best_times_in_session = true			# Displays the best lap times you've achieved in the current session on the top right in-game
 
 [extras]
-view_replays = false					# View & spectate replays for a track, including inputs
-always_show_input_display = false			# Always show the replay input display, even when driving
-
-# Input display position & color scheme
-[input_display]
-pos_x = 0.2
-pos_y = 0.85
-highlight_r = 0
-highlight_g = 255
-highlight_b = 0
-background_r = 215
-background_g = 215
-background_b = 215
+view_replays = false					# View & spectate replays for a track
