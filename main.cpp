@@ -220,6 +220,9 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 				ApplyLUAPatches();
 				bChloeCollectionIntegration = true;
 				bTimeTrialsEnabled = false;
+
+				auto config = toml::parse_file("FlatOutUCTimeTrialGhosts_gcp.toml");
+				bReplayIgnoreMismatches = config["main"]["load_mismatched_replays"].value_or(false);
 			}
 			else {
 				InitStandalone();
