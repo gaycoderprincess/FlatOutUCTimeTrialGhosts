@@ -17,6 +17,8 @@ void SetGhostVisuals(bool on) {
 	NyaHookLib::Patch<uint64_t>(0x43F9E7, on ? 0xD28500000113840F : 0xD2859000000114E9);
 }
 
+void UninitTimeTrials();
+
 #include "timetrialshared.h"
 
 uintptr_t ProcessGhostCarsASM_call = 0x478CF0;
@@ -32,7 +34,7 @@ void __attribute__((naked)) ProcessGhostCarsASM() {
 	);
 }
 
-uintptr_t ProcessPlayerCarsASM_call = 0x46C850;
+uintptr_t ProcessPlayerCarsASM_call = 0x478CF0;
 void __attribute__((naked)) ProcessPlayerCarsASM() {
 	__asm__ (
 		"pushad\n\t"
@@ -122,6 +124,80 @@ void __fastcall D3DResetHook(void* a1) {
 	return D3DResetOrig(a1);
 }
 
+void InitTimeTrials() {
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x409C7D, &ProcessGhostCarsASM);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x47A010, &ProcessPlayerCarsASM);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x469459, &GetAIName);
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x492A9F, &FinishLapASM);
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x409302, &AISameCarASM);
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4696C8, &GetPlayerCarASM);
+	NyaHookLib::Patch<uint8_t>(0x46828E + 1, 1); // only spawn one ai
+	NyaHookLib::Patch<uint8_t>(0x46829F + 1, 1); // only spawn one ai
+	NyaHookLib::Patch<uint8_t>(0x43407E, 0xEB); // use regular skins for ai
+	NyaHookLib::Patch<uint8_t>(0x432CF5, 0xEB); // use regular skins for ai
+	NyaHookLib::Patch<uint8_t>(0x432D6E, 0xEB); // use regular skins for ai
+	NyaHookLib::Patch<uint8_t>(0x433EA2, 0xEB); // use regular skins for ai
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x409D90, 0x40A6BE); // disable ai control
+}
+
+void DisableProps() {
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x58C1FD, 0x58C28C);
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x58B9FC, 0x58BAA0);
+}
+
+void EnableProps() {
+	NyaHookLib::Patch<uint64_t>(0x58C1FD, 0x558B00000089840F);
+	NyaHookLib::Patch<uint64_t>(0x58B9FC, 0x4C8B0000009E840F);
+}
+
+void UninitTimeTrials() {
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x409C7D, ProcessGhostCarsASM_call);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x47A010, ProcessPlayerCarsASM_call);
+
+	// revert ai name
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x469459, 0x467770);
+
+	// revert assembly patches
+	NyaHookLib::Patch<uint64_t>(0x492A9F, 0xA6E809298FAC0D8B);
+	NyaHookLib::Patch<uint64_t>(0x409302, 0x86C7000002989689);
+	NyaHookLib::Patch<uint64_t>(0x4696C8, 0x0002989389EC578B);
+
+	// revert ai count
+	NyaHookLib::Patch<uint8_t>(0x46828E + 1, 11);
+	NyaHookLib::Patch<uint8_t>(0x46829F + 1, 11);
+
+	// revert ai skins
+	NyaHookLib::Patch<uint8_t>(0x43407E, 0x75);
+	NyaHookLib::Patch<uint8_t>(0x432CF5, 0x75);
+	NyaHookLib::Patch<uint8_t>(0x432D6E, 0x75);
+	NyaHookLib::Patch<uint8_t>(0x433EA2, 0x75);
+
+	// revert ai control
+	NyaHookLib::Patch<uint64_t>(0x409D90, 0xEC83F0E483EC8B55);
+
+	// revert prop patches
+	EnableProps();
+}
+
+#include "luafunctions.h"
+
+void InitStandalone() {
+	InitAndReadConfigFile();
+
+	if (bTimeTrialsEnabled) {
+		InitTimeTrials();
+		if (nGhostVisuals == 0) SetGhostVisuals(false);
+		if (bNoProps) {
+			DisableProps();
+		}
+	}
+	else {
+		bPBTimeDisplayEnabled = false;
+		bCurrentSessionPBTimeDisplayEnabled = false;
+		bViewReplayMode = false;
+	}
+}
+
 BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 	switch( fdwReason ) {
 		case DLL_PROCESS_ATTACH: {
@@ -131,39 +207,19 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 				return TRUE;
 			}
 
-			InitAndReadConfigFile();
-
-			if (bTimeTrialsEnabled) {
-				ProcessGhostCarsASM_call = NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x409C7D, &ProcessGhostCarsASM);
-				ProcessPlayerCarsASM_call = NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x47A010, &ProcessPlayerCarsASM);
-				NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x469459, &GetAIName);
-				NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x492A9F, &FinishLapASM);
-				NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x409302, &AISameCarASM);
-				NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4696C8, &GetPlayerCarASM);
-				NyaHookLib::Patch<uint8_t>(0x46828E + 1, 1); // only spawn one ai
-				NyaHookLib::Patch<uint8_t>(0x46829F + 1, 1); // only spawn one ai
-				NyaHookLib::Patch<uint8_t>(0x43407E, 0xEB); // use regular skins for ai
-				NyaHookLib::Patch<uint8_t>(0x432CF5, 0xEB); // use regular skins for ai
-				NyaHookLib::Patch<uint8_t>(0x432D6E, 0xEB); // use regular skins for ai
-				NyaHookLib::Patch<uint8_t>(0x433EA2, 0xEB); // use regular skins for ai
-
-				NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x409D90, 0x40A6BE); // disable ai control
-				if (nGhostVisuals == 0) SetGhostVisuals(false);
-				if (bNoProps) {
-					NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x58C1FD, 0x58C28C);
-					NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x58B9FC, 0x58BAA0);
-				}
-			}
-			else {
-				bPBTimeDisplayEnabled = false;
-				bCurrentSessionPBTimeDisplayEnabled = false;
-				bViewReplayMode = false;
-			}
-
 			if (bShowInputsWhileDriving || bViewReplayMode || bPBTimeDisplayEnabled || bCurrentSessionPBTimeDisplayEnabled) {
 				EndSceneOrig = (HRESULT(__thiscall*)(void*))(*(uintptr_t*)0x677448);
 				NyaHookLib::Patch(0x677448, &EndSceneHook);
 				D3DResetOrig = (void(__thiscall*)(void*))NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x60F744, &D3DResetHook);
+			}
+
+			if (std::filesystem::exists("FlatOutUCChloeCollection_gcp.asi") || std::filesystem::exists("FlatOutUCCustomMP_gcp.asi") || std::filesystem::exists("foucpack_gcp_misc.bfs")) {
+				ApplyLUAPatches();
+				bChloeCollectionIntegration = true;
+				bTimeTrialsEnabled = false;
+			}
+			else {
+				InitStandalone();
 			}
 		} break;
 		default:

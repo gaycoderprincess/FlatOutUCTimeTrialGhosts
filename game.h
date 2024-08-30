@@ -178,6 +178,8 @@ public:
 };
 auto& pScoreManager = *(ScoreManager**)0x846514;
 
+auto& pLoadingScreen = *(void**)0x929902C;
+
 class Font {
 public:
 	uint8_t _0[0xC];
@@ -222,3 +224,13 @@ void DrawStringFO2(tNyaStringData data, const wchar_t* string, const char* font)
 	}
 	Font::Display(pFont, data.x * nResX, data.y * nResY, string);
 }
+
+auto luaL_checktype = (void(*)(void*, int, int))0x634C70;
+auto luaL_checkudata = (void*(*)(void*, int, const char*))0x634BB0;
+auto luaL_typerror = (void(*)(void*, int, const char*))0x634900;
+auto lua_pushnumber = (int(*)(void*, float))0x633550;
+auto luaL_checknumber = (float(*)(void*, int))0x634DD0;
+auto lua_setfield = (void(*)(void*, int, const char*))0x633D20;
+auto lua_pushcfunction = (void(*)(void*, void*, int))0x633750;
+auto lua_pushboolean = (int(*)(void*, int))0x633870;
+auto lua_pushlstring = (int(*)(void*, const wchar_t*, size_t))0x6335D0;
