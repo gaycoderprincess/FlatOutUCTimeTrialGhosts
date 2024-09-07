@@ -155,7 +155,7 @@ void UninitTimeTrials() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x47A010, ProcessPlayerCarsASM_call);
 
 	// revert ai name
-	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x469459, 0x467770);
+	if (!bChloeCollectionIntegration) NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x469459, 0x467770);
 
 	// revert assembly patches
 	NyaHookLib::Patch<uint64_t>(0x492A9F, 0xA6E809298FAC0D8B);
