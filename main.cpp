@@ -110,7 +110,9 @@ void D3DHookMain() {
 
 auto EndSceneOrig = (HRESULT(__thiscall*)(void*))nullptr;
 HRESULT __fastcall EndSceneHook(void* a1) {
+	*(float*)0x716034 = 480.1f; // hack to fix font scale in chloe collection
 	D3DHookMain();
+	*(float*)0x716034 = 480.0f;
 	return EndSceneOrig(a1);
 }
 
