@@ -127,8 +127,13 @@ void __fastcall D3DResetHook(void* a1) {
 }
 
 void InitTimeTrials() {
-	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x409C7D, &ProcessGhostCarsASM);
-	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x47A010, &ProcessPlayerCarsASM);
+	static bool bOnce = false;
+	if (!bOnce) {
+		ProcessGhostCarsASM_call = NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x409C7D, &ProcessGhostCarsASM);
+		ProcessPlayerCarsASM_call = NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x47A010, &ProcessPlayerCarsASM);
+		bOnce = true;
+	}
+
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x469459, &GetAIName);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x492A9F, &FinishLapASM);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x409302, &AISameCarASM);
@@ -153,9 +158,6 @@ void EnableProps() {
 }
 
 void UninitTimeTrials() {
-	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x409C7D, ProcessGhostCarsASM_call);
-	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x47A010, ProcessPlayerCarsASM_call);
-
 	// revert ai name
 	if (!bChloeCollectionIntegration) NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x469459, 0x467770);
 

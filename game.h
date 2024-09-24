@@ -225,6 +225,21 @@ void DrawStringFO2(tNyaStringData data, const wchar_t* string, const char* font)
 	Font::Display(pFont, data.x * nResX, data.y * nResY, string);
 }
 
+template<typename T>
+T* GetPlayerScore(int playerId) {
+	if (!pScoreManager) return nullptr;
+
+	auto score = (T**)pScoreManager->pScoresStart;
+	auto end = (T**)pScoreManager->pScoresEnd;
+	while (score < end) {
+		if ((*score)->nPlayerId + 1 == playerId) {
+			return *score;
+		}
+		score++;
+	}
+	return nullptr;
+}
+
 auto luaL_checktype = (void(*)(void*, int, int))0x634C70;
 auto luaL_checkudata = (void*(*)(void*, int, const char*))0x634BB0;
 auto luaL_typerror = (void(*)(void*, int, const char*))0x634900;
