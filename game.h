@@ -70,6 +70,71 @@ public:
 	float fDamage; // +7AB8
 };
 
+class LiteDb {
+public:
+
+	virtual void _vf0() = 0;
+	virtual void _vf1() = 0;
+	virtual void _vf2() = 0;
+	virtual void _vf3() = 0;
+	virtual void _vf4() = 0;
+	virtual void _vf5() = 0;
+	virtual void _vf6() = 0;
+	virtual void _vf7() = 0;
+	virtual void _vf8() = 0;
+	virtual void _vf9() = 0;
+	virtual LiteDb* GetTable(const char* name) = 0;
+	virtual void _vf11() = 0;
+	virtual void _vf12() = 0;
+	virtual void _vf13() = 0;
+	virtual void _vf14() = 0;
+	virtual void _vf15() = 0;
+	virtual void _vf16() = 0;
+	virtual void _vf17() = 0;
+	virtual void _vf18() = 0;
+	virtual void _vf19() = 0;
+	virtual void _vf20() = 0;
+	virtual void _vf21() = 0;
+	virtual void _vf22() = 0;
+	virtual void _vf23() = 0;
+	virtual void _vf24() = 0;
+	virtual void _vf25() = 0;
+	virtual void _vf26() = 0;
+	virtual void _vf27() = 0;
+	virtual void _vf28() = 0;
+	virtual void _vf29() = 0;
+	virtual void _vf30() = 0;
+	virtual void _vf31() = 0;
+	virtual void _vf32() = 0;
+	virtual void _vf33() = 0;
+	virtual void _vf34() = 0;
+	virtual void* GetPropertyPointer(const char* name) = 0;
+	virtual int GetPropertyAsBool(const char* name, int offset) = 0;
+	virtual int GetPropertyAsInt(const char* name, int offset) = 0;
+	virtual char GetPropertyAsChar(const char* name, int offset) = 0;
+	virtual float GetPropertyAsFloat(const char* name, int offset) = 0;
+	virtual uint32_t GetPropertyAsRGBA(const char* name, int offset) = 0;
+	virtual void* GetPropertyAsVector2(void* out, const char* name, int offset) = 0;
+	virtual void* GetPropertyAsVector3(void* out, const char* name, int offset) = 0;
+	virtual void* GetPropertyAsVector4(void* out, const char* name, int offset) = 0;
+	virtual LiteDb* GetPropertyAsNode(void* out, const char* name, int offset) = 0;
+	virtual LiteDb* GetPropertyAsNodePtr(const char* name, int offset) = 0;
+	virtual const char* GetPropertyAsString(const char* name) = 0;
+};
+auto GetLiteDB = (LiteDb*(*)())0x5A5EB0;
+
+class ScriptHost {
+public:
+	struct tLUAStruct {
+		const char* unkString; // "unnamed"
+		void* pLUAContext; // +4
+	};
+
+	uint8_t _0[0x10];
+	tLUAStruct* pLUAStruct;
+};
+auto& pScriptHost = *(ScriptHost**)0x9298FB8;
+
 enum eControllerInput {
 	INPUT_HANDBRAKE = 0,
 	INPUT_NITRO = 1,
@@ -244,8 +309,15 @@ auto luaL_checktype = (void(*)(void*, int, int))0x634C70;
 auto luaL_checkudata = (void*(*)(void*, int, const char*))0x634BB0;
 auto luaL_typerror = (void(*)(void*, int, const char*))0x634900;
 auto lua_pushnumber = (int(*)(void*, float))0x633550;
+auto lua_tolstring = (const char*(*)(void*, int, void*))0x6332B0;
 auto luaL_checknumber = (float(*)(void*, int))0x634DD0;
 auto lua_setfield = (void(*)(void*, int, const char*))0x633D20;
+auto lua_setglobal = (void(*)(void*, const char*))0x633640;
+auto lua_gettable = (void(*)(void*, int))0x633940;
+auto lua_getfield = (void(*)(void*, int, const char*))0x633980;
+auto lua_rawgeti = (void(*)(void*, int, int))0x633A80;
 auto lua_pushcfunction = (void(*)(void*, void*, int))0x633750;
 auto lua_pushboolean = (int(*)(void*, int))0x633870;
 auto lua_pushlstring = (int(*)(void*, const wchar_t*, size_t))0x6335D0;
+auto lua_gettop = (int(*)(void*))0x632B10;
+auto lua_settop = (void(*)(void*, int))0x632B30;
