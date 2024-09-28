@@ -108,22 +108,18 @@ void D3DHookMain() {
 	HookBaseLoop();
 }
 
-auto EndSceneOrig = (HRESULT(__thiscall*)(void*))nullptr;
-HRESULT __fastcall EndSceneHook(void* a1) {
+void OnEndScene() {
 	*(float*)0x716034 = 480.1f; // hack to fix font scale in chloe collection
 	D3DHookMain();
 	*(float*)0x716034 = 480.0f;
-	return EndSceneOrig(a1);
 }
 
-auto D3DResetOrig = (void(__thiscall*)(void*))nullptr;
-void __fastcall D3DResetHook(void* a1) {
+void OnD3DReset() {
 	if (g_pd3dDevice) {
 		UpdateD3DProperties();
 		ImGui_ImplDX9_InvalidateDeviceObjects();
 		bDeviceJustReset = true;
 	}
-	return D3DResetOrig(a1);
 }
 
 void InitTimeTrials() {
@@ -215,9 +211,9 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			}
 
 			if (bShowInputsWhileDriving || bViewReplayMode || bPBTimeDisplayEnabled || bCurrentSessionPBTimeDisplayEnabled) {
-				EndSceneOrig = (HRESULT(__thiscall*)(void*))(*(uintptr_t*)0x677448);
-				NyaHookLib::Patch(0x677448, &EndSceneHook);
-				D3DResetOrig = (void(__thiscall*)(void*))NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x60F744, &D3DResetHook);
+				NyaFO2Hooks::PlaceD3DHooks();
+				NyaFO2Hooks::aEndSceneFuncs.push_back(OnEndScene);
+				NyaFO2Hooks::aD3DResetFuncs.push_back(OnD3DReset);
 			}
 
 			if (std::filesystem::exists("FlatOutUCChloeCollection_gcp.asi") || std::filesystem::exists("FlatOutUCCustomMP_gcp.asi") || std::filesystem::exists("foucpack_gcp_misc.bfs")) {

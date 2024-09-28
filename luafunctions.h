@@ -61,8 +61,7 @@ int TimeTrial_WasLastRaceTimeTrial(void* a1) {
 	return 1;
 }
 
-auto lua_pushcfunction_hooked = (void(*)(void*, void*, int))0x633750;
-void CustomLUAFunctions(void* a1, void* a2, int a3) {
+void CustomLUAFunctions(void* a1) {
 	lua_pushcfunction(a1, (void*)&TimeTrial_SetEnabled, 0);
 	lua_setfield(a1, -10002, "TimeTrial_SetEnabled");
 	lua_pushcfunction(a1, (void*)&TimeTrial_Set3LapMode, 0);
@@ -83,9 +82,9 @@ void CustomLUAFunctions(void* a1, void* a2, int a3) {
 	lua_setfield(a1, -10002, "TimeTrial_GetNitroType");
 	lua_pushcfunction(a1, (void*)&TimeTrial_WasLastRaceTimeTrial, 0);
 	lua_setfield(a1, -10002, "TimeTrial_WasLastRaceTimeTrial");
-	return lua_pushcfunction_hooked(a1, a2, a3);
 }
 
 void ApplyLUAPatches() {
-	lua_pushcfunction_hooked = (void(*)(void*, void*, int))NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4C9829, &CustomLUAFunctions);
+	NyaFO2Hooks::PlaceScriptHook();
+	NyaFO2Hooks::aScriptFuncs.push_back(CustomLUAFunctions);
 }
