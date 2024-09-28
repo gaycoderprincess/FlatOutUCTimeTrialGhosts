@@ -6,7 +6,7 @@
 #include "nya_commonmath.h"
 #include "nya_commonhooklib.h"
 
-#include "game.h"
+#include "fouc.h"
 
 uintptr_t pControllerVTable = 0x6F403C;
 void SetPlayerControl(bool on) {
@@ -163,7 +163,7 @@ void UninitTimeTrials() {
 
 	// revert assembly patches
 	NyaHookLib::Patch<uint64_t>(0x492A9F, 0xA6E809298FAC0D8B);
-	NyaHookLib::Patch<uint64_t>(0x409302, 0x86C7000002989689);
+	if (!bChloeCollectionIntegration) NyaHookLib::Patch<uint64_t>(0x409302, 0x86C7000002989689);
 	NyaHookLib::Patch<uint64_t>(0x4696C8, 0x0002989389EC578B);
 
 	// revert ai count
