@@ -30,6 +30,12 @@ int TimeTrial_SetPropsEnabled(void* a1) {
 	return 0;
 }
 
+int TimeTrial_SetPropsEnabledBool(void* a1) {
+	bool on = luaL_checknumber(a1, 1);
+	bNoProps = !on;
+	return 0;
+}
+
 int TimeTrial_SetNitroType(void* a1) {
 	nNitroType = luaL_checknumber(a1, 1);
 	return 0;
@@ -70,6 +76,8 @@ void CustomLUAFunctions(void* a1) {
 	lua_setfield(a1, -10002, "TimeTrial_Get3LapMode");
 	lua_pushcfunction(a1, (void*)&TimeTrial_SetPropsEnabled, 0);
 	lua_setfield(a1, -10002, "TimeTrial_SetPropsEnabled");
+	lua_pushcfunction(a1, (void*)&TimeTrial_SetPropsEnabledBool, 0);
+	lua_setfield(a1, -10002, "TimeTrial_SetPropsEnabledBool");
 	lua_pushcfunction(a1, (void*)&TimeTrial_SetNitroType, 0);
 	lua_setfield(a1, -10002, "TimeTrial_SetNitroType");
 	lua_pushcfunction(a1, (void*)&TimeTrial_SetUpgradeLevel, 0);
