@@ -76,14 +76,65 @@ void __attribute__((naked)) GetPlayerCarASM() {
 	);
 }
 
+int GetNumSkinsForCar(int dbCar) {
+	int tmp[2];
+	auto path = "data/cars/car_" + std::to_string(GetCarDataPath(dbCar, false)) + "/skin";
+	int i;
+	for (i = 0; i < 255; i++) {
+		auto file = (path + std::to_string(i+1) + ".dds");
+		if (!BFSManager_DoesFileExist(*(void**)0x846688, file.c_str(), tmp)) {
+			break;
+		}
+	}
+	return i;
+}
+
+void __fastcall SetAISameCar(Player* pPlayer) {
+	pPlayer->nCarId = nPlayerCarID;
+
+	if (pPlayer->nPlayerId <= 2) return;
+	auto tmp = LoadTemporaryGhostForSpawning(pPlayer->nCarId);
+	if (!tmp->IsValid()) return;
+	if (tmp->sPlayerName[0] && pOpponentPlayerInfo) {
+		wcscpy_s(pOpponentPlayerInfo->sPlayerName, 16, tmp->sPlayerName.c_str());
+	}
+	if (tmp->nCarSkinId < 1 || tmp->nCarSkinId > GetNumSkinsForCar(pPlayer->nCarId)) return;
+	pPlayer->nCarSkinId = tmp->nCarSkinId;
+}
+
 uintptr_t AISameCarASM_jmp = 0x409308;
 void __attribute__((naked)) AISameCarASM() {
 	__asm__ (
-		"mov edx, %1\n\t"
-		"mov [esi+0x298], edx\n\t"
+		"pushad\n\t"
+		"mov ecx, esi\n\t"
+		"call %1\n\t"
+		"popad\n\t"
 		"jmp %0\n\t"
 			:
-			:  "m" (AISameCarASM_jmp), "m" (nPlayerCarID)
+			:  "m" (AISameCarASM_jmp), "i" (SetAISameCar)
+	);
+}
+
+void __attribute__((naked)) GetAINameASM() {
+	__asm__ (
+		"mov ecx, eax\n\t"
+		"mov edx, esi\n\t"
+		"push ecx\n\t"
+		"push edx\n\t"
+		"push ebx\n\t"
+		"push ebp\n\t"
+		"push esi\n\t"
+		"push edi\n\t"
+		"call %0\n\t"
+		"pop edi\n\t"
+		"pop esi\n\t"
+		"pop ebp\n\t"
+		"pop ebx\n\t"
+		"pop edx\n\t"
+		"pop ecx\n\t"
+		"ret\n\t"
+			:
+			:  "i" (GetAIName)
 	);
 }
 
@@ -130,7 +181,7 @@ void InitTimeTrials() {
 		bOnce = true;
 	}
 
-	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x469459, &GetAIName);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x469459, &GetAINameASM);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x492A9F, &FinishLapASM);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x409302, &AISameCarASM);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4696C8, &GetPlayerCarASM);
