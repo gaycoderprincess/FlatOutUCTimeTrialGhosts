@@ -29,6 +29,7 @@ target_include_directories(FlatOutUCTimeTrialGhosts PUBLIC ../nya-common/3rdpart
 target_include_directories(FlatOutUCTimeTrialGhosts PUBLIC ../nya-common/3rdparty/imgui/backends)
 target_include_directories(FlatOutUCTimeTrialGhosts PUBLIC ../nya-common-fouc)
 target_include_directories(FlatOutUCTimeTrialGhosts PUBLIC ../FlatOut2TimeTrialGhosts)
+target_include_directories(FlatOutUCTimeTrialGhosts PUBLIC ../FlatOutUCMenuLib/include)
 target_link_options(FlatOutUCTimeTrialGhosts PRIVATE "-Wl,--exclude-all-symbols")
 set_target_properties(FlatOutUCTimeTrialGhosts PROPERTIES PREFIX "")
 set_target_properties(FlatOutUCTimeTrialGhosts PROPERTIES SUFFIX "_gcp.asi")

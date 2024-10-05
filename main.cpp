@@ -7,6 +7,7 @@
 #include "nya_commonhooklib.h"
 
 #include "fouc.h"
+#include "chloemenulib.h"
 
 uintptr_t pControllerVTable = 0x6F403C;
 void SetPlayerControl(bool on) {
@@ -139,10 +140,10 @@ void __attribute__((naked)) GetAINameASM() {
 }
 
 void UpdateD3DProperties() {
-	g_pd3dDevice = *(IDirect3DDevice9**)(0x7242B0 + 0x60);
-	ghWnd = *(HWND*)(0x7242B0 + 0x7C);
-	nResX = *(int*)0x764A84;
-	nResY = *(int*)0x764A88;
+	g_pd3dDevice = pDeviceD3d->pD3DDevice;
+	ghWnd = pDeviceD3d->hWnd;
+	nResX = nGameResolutionX;
+	nResY = nGameResolutionY;
 }
 
 bool bDeviceJustReset = false;
@@ -192,6 +193,8 @@ void InitTimeTrials() {
 	NyaHookLib::Patch<uint8_t>(0x432D6E, 0xEB); // use regular skins for ai
 	NyaHookLib::Patch<uint8_t>(0x433EA2, 0xEB); // use regular skins for ai
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x409D90, 0x40A6BE); // disable ai control
+	
+	SetGhostVisuals(nGhostVisuals);
 }
 
 void DisableProps() {
@@ -252,6 +255,75 @@ void InitStandalone() {
 	}
 }
 
+void TimeTrialMenu() {
+	ChloeMenuLib::BeginMenu();
+
+	if (DrawMenuOption(std::format("PB Display - {}", bPBTimeDisplayEnabled), false, false)) {
+		bPBTimeDisplayEnabled = !bPBTimeDisplayEnabled;
+	}
+
+	if (DrawMenuOption(std::format("Session PB Display - {}", bCurrentSessionPBTimeDisplayEnabled), false, false)) {
+		bCurrentSessionPBTimeDisplayEnabled = !bCurrentSessionPBTimeDisplayEnabled;
+	}
+
+	if (DrawMenuOption(std::format("Load Mismatched Replays - {}", bReplayIgnoreMismatches), false, false)) {
+		bReplayIgnoreMismatches = !bReplayIgnoreMismatches;
+	}
+
+	const char* aGhostVisualNames[] = {
+			"Off",
+			"On",
+			"Proximity"
+	};
+	if (DrawMenuOption(std::format("Ghost Visuals < {} >", aGhostVisualNames[nGhostVisuals]), false, false, true)) {
+		if (auto lr = ChloeMenuLib::GetMoveLR()) {
+			nGhostVisuals += lr;
+			if (nGhostVisuals < 0) nGhostVisuals = 2;
+			if (nGhostVisuals > 2) nGhostVisuals = 0;
+			if (pGame->nGameState == GAME_STATE_RACE && bTimeTrialsEnabled) {
+				SetGhostVisuals(nGhostVisuals);
+			}
+		}
+	}
+
+	if (pGame->nGameState != GAME_STATE_RACE) {
+		if (DrawMenuOption(std::format("Replay Viewer - {}", bViewReplayMode), false, false)) {
+			bViewReplayMode = !bViewReplayMode;
+		}
+
+		if (!bChloeCollectionIntegration) {
+			const char* aNitroNames[] = {
+					"0x",
+					"1x",
+					"2x",
+					"Infinite"
+			};
+			if (DrawMenuOption(std::format("Nitro < {} >", aNitroNames[nNitroType]), false, false, true)) {
+				if (auto lr = ChloeMenuLib::GetMoveLR()) {
+					nNitroType += lr;
+					if (nNitroType < 0) nNitroType = NITRO_INFINITE;
+					if (nNitroType > NITRO_INFINITE) nNitroType = 0;
+				}
+			}
+
+			if (DrawMenuOption(std::format("Props - {}", bNoProps), false, false)) {
+				if (bNoProps = !bNoProps) {
+					DisableProps();
+				}
+				else {
+					EnableProps();
+				}
+			}
+
+			if (DrawMenuOption(std::format("Three Lap Mode - {}", b3LapMode), false, false)) {
+				b3LapMode = !b3LapMode;
+			}
+		}
+	}
+
+	ChloeMenuLib::EndMenu();
+}
+
 BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 	switch( fdwReason ) {
 		case DLL_PROCESS_ATTACH: {
@@ -266,6 +338,8 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 				NyaFO2Hooks::aEndSceneFuncs.push_back(OnEndScene);
 				NyaFO2Hooks::aD3DResetFuncs.push_back(OnD3DReset);
 			}
+
+			ChloeMenuLib::RegisterMenu("Time Trial Ghosts - gaycoderprincess", &TimeTrialMenu);
 
 			if (std::filesystem::exists("FlatOutUCChloeCollection_gcp.asi") || std::filesystem::exists("FlatOutUCCustomMP_gcp.asi") || std::filesystem::exists("foucpack_gcp_misc.bfs")) {
 				ApplyLUAPatches();
