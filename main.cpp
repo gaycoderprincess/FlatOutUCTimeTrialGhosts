@@ -193,7 +193,7 @@ void InitTimeTrials() {
 	NyaHookLib::Patch<uint8_t>(0x432D6E, 0xEB); // use regular skins for ai
 	NyaHookLib::Patch<uint8_t>(0x433EA2, 0xEB); // use regular skins for ai
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x409D90, 0x40A6BE); // disable ai control
-	
+
 	SetGhostVisuals(nGhostVisuals);
 }
 
@@ -258,15 +258,15 @@ void InitStandalone() {
 void TimeTrialMenu() {
 	ChloeMenuLib::BeginMenu();
 
-	if (DrawMenuOption(std::format("PB Display - {}", bPBTimeDisplayEnabled), false, false)) {
+	if (DrawMenuOption(std::format("PB Display - {}", bPBTimeDisplayEnabled), "", false, false)) {
 		bPBTimeDisplayEnabled = !bPBTimeDisplayEnabled;
 	}
 
-	if (DrawMenuOption(std::format("Session PB Display - {}", bCurrentSessionPBTimeDisplayEnabled), false, false)) {
+	if (DrawMenuOption(std::format("Session PB Display - {}", bCurrentSessionPBTimeDisplayEnabled), "", false, false)) {
 		bCurrentSessionPBTimeDisplayEnabled = !bCurrentSessionPBTimeDisplayEnabled;
 	}
 
-	if (DrawMenuOption(std::format("Load Mismatched Replays - {}", bReplayIgnoreMismatches), false, false)) {
+	if (DrawMenuOption(std::format("Load Mismatched Replays - {}", bReplayIgnoreMismatches), "", false, false)) {
 		bReplayIgnoreMismatches = !bReplayIgnoreMismatches;
 	}
 
@@ -275,7 +275,7 @@ void TimeTrialMenu() {
 			"On",
 			"Proximity"
 	};
-	if (DrawMenuOption(std::format("Ghost Visuals < {} >", aGhostVisualNames[nGhostVisuals]), false, false, true)) {
+	if (DrawMenuOption(std::format("Ghost Visuals < {} >", aGhostVisualNames[nGhostVisuals]), "", false, false, true)) {
 		if (auto lr = ChloeMenuLib::GetMoveLR()) {
 			nGhostVisuals += lr;
 			if (nGhostVisuals < 0) nGhostVisuals = 2;
@@ -287,7 +287,7 @@ void TimeTrialMenu() {
 	}
 
 	if (pGame->nGameState != GAME_STATE_RACE) {
-		if (DrawMenuOption(std::format("Replay Viewer - {}", bViewReplayMode), false, false)) {
+		if (DrawMenuOption(std::format("Replay Viewer - {}", bViewReplayMode), "", false, false)) {
 			bViewReplayMode = !bViewReplayMode;
 		}
 
@@ -298,7 +298,7 @@ void TimeTrialMenu() {
 					"2x",
 					"Infinite"
 			};
-			if (DrawMenuOption(std::format("Nitro < {} >", aNitroNames[nNitroType]), false, false, true)) {
+			if (DrawMenuOption(std::format("Nitro < {} >", aNitroNames[nNitroType]), "", false, false, true)) {
 				if (auto lr = ChloeMenuLib::GetMoveLR()) {
 					nNitroType += lr;
 					if (nNitroType < 0) nNitroType = NITRO_INFINITE;
@@ -306,7 +306,7 @@ void TimeTrialMenu() {
 				}
 			}
 
-			if (DrawMenuOption(std::format("Props - {}", bNoProps), false, false)) {
+			if (DrawMenuOption(std::format("Props - {}", bNoProps), "", false, false)) {
 				if (bNoProps = !bNoProps) {
 					DisableProps();
 				}
@@ -315,7 +315,7 @@ void TimeTrialMenu() {
 				}
 			}
 
-			if (DrawMenuOption(std::format("Three Lap Mode - {}", b3LapMode), false, false)) {
+			if (DrawMenuOption(std::format("Three Lap Mode - {}", b3LapMode), "", false, false)) {
 				b3LapMode = !b3LapMode;
 			}
 		}
