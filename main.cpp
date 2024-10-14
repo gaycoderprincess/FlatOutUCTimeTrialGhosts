@@ -280,13 +280,13 @@ void TimeTrialMenu() {
 			nGhostVisuals += lr;
 			if (nGhostVisuals < 0) nGhostVisuals = 2;
 			if (nGhostVisuals > 2) nGhostVisuals = 0;
-			if (pGame->nGameState == GAME_STATE_RACE && bTimeTrialsEnabled) {
+			if (pGameFlow->nGameState == GAME_STATE_RACE && bTimeTrialsEnabled) {
 				SetGhostVisuals(nGhostVisuals);
 			}
 		}
 	}
 
-	if (pGame->nGameState != GAME_STATE_RACE) {
+	if (pGameFlow->nGameState != GAME_STATE_RACE) {
 		if (DrawMenuOption(std::format("Replay Viewer - {}", bViewReplayMode), "", false, false)) {
 			bViewReplayMode = !bViewReplayMode;
 		}
