@@ -61,6 +61,11 @@ int TimeTrial_GetNitroType(void* a1) {
 	return 1;
 }
 
+int TimeTrial_SetCareerMode(void* a1) {
+	bIsCareerMode = luaL_checknumber(a1, 1);
+	return 0;
+}
+
 int TimeTrial_WasLastRaceTimeTrial(void* a1) {
 	lua_pushboolean(a1, bLastRaceWasTimeTrial);
 	bLastRaceWasTimeTrial = false;
@@ -88,6 +93,8 @@ void CustomLUAFunctions(void* a1) {
 	lua_setfield(a1, -10002, "TimeTrial_GetPropsEnabled");
 	lua_pushcfunction(a1, (void*)&TimeTrial_GetNitroType, 0);
 	lua_setfield(a1, -10002, "TimeTrial_GetNitroType");
+	lua_pushcfunction(a1, (void*)&TimeTrial_SetCareerMode, 0);
+	lua_setfield(a1, -10002, "TimeTrial_SetCareerMode");
 	lua_pushcfunction(a1, (void*)&TimeTrial_WasLastRaceTimeTrial, 0);
 	lua_setfield(a1, -10002, "TimeTrial_WasLastRaceTimeTrial");
 }

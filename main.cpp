@@ -186,8 +186,8 @@ void InitTimeTrials() {
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x492A9F, &FinishLapASM);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x409302, &AISameCarASM);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4696C8, &GetPlayerCarASM);
-	NyaHookLib::Patch<uint8_t>(0x46828E + 1, 2); // only spawn two ai
-	NyaHookLib::Patch<uint8_t>(0x46829F + 1, 2); // only spawn two ai
+	NyaHookLib::Patch<uint8_t>(0x46828E + 1, bIsCareerMode ? 3 : 2); // only spawn two ai
+	NyaHookLib::Patch<uint8_t>(0x46829F + 1, bIsCareerMode ? 3 : 2); // only spawn two ai
 	NyaHookLib::Patch<uint8_t>(0x43407E, 0xEB); // use regular skins for ai
 	NyaHookLib::Patch<uint8_t>(0x432CF5, 0xEB); // use regular skins for ai
 	NyaHookLib::Patch<uint8_t>(0x432D6E, 0xEB); // use regular skins for ai
