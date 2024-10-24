@@ -183,7 +183,7 @@ void InitTimeTrials() {
 	}
 
 	int numOpponents = 2;
-	if (bIsCareerMode) numOpponents = bDisplayAuthorInCareer ? 4 : 3;
+	if (bIsCareerMode) numOpponents = bDisplayAuthorInCareer ? 5 : 3;
 
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x469459, &GetAINameASM);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x492A9F, &FinishLapASM);
