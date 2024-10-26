@@ -355,6 +355,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 
 			if (std::filesystem::exists("FlatOutUCChloeCollection_gcp.asi") || std::filesystem::exists("FlatOutUCCustomMP_gcp.asi") || std::filesystem::exists("foucpack_gcp_misc.bfs")) {
 				ApplyLUAPatches();
+				ApplyHUDPatches();
 				bChloeCollectionIntegration = true;
 				bTimeTrialsEnabled = false;
 
