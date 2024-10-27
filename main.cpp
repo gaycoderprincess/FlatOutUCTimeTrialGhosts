@@ -293,9 +293,9 @@ void TimeTrialMenu() {
 		if (DrawMenuOption(std::format("Show Career Ghosts - {}", bDisplayGhostsInCareer), "", false, false)) {
 			bDisplayGhostsInCareer = !bDisplayGhostsInCareer;
 		}
-		if (DrawMenuOption(std::format("Show Career Author Ghost - {}", bDisplayAuthorInCareer), "", false, false)) {
-			bDisplayAuthorInCareer = !bDisplayAuthorInCareer;
-		}
+		//if (DrawMenuOption(std::format("Show Career Author Ghost - {}", bDisplayAuthorInCareer), "", false, false)) {
+		//	bDisplayAuthorInCareer = !bDisplayAuthorInCareer;
+		//}
 	}
 
 	if (pGameFlow->nGameState != GAME_STATE_RACE) {
