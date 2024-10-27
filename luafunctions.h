@@ -78,6 +78,21 @@ int TimeTrial_WasLastRaceTimeTrial(void* a1) {
 	return 1;
 }
 
+int TimeTrial_GetLastEventGhostTime(void* a1) {
+	lua_pushnumber(a1, OpponentsCareer[(int)luaL_checknumber(a1, 1)].nLastRacePBTime);
+	return 1;
+}
+
+int TimeTrial_IsLastEventGhostValid(void* a1) {
+	lua_pushnumber(a1, OpponentsCareer[(int)luaL_checknumber(a1, 1)].nLastRacePBTime != UINT_MAX);
+	return 1;
+}
+
+int TimeTrial_GetLastEventPlayerTime(void* a1) {
+	lua_pushnumber(a1, nCareerLastRacePBTime);
+	return 1;
+}
+
 void CustomLUAFunctions(void* a1) {
 	lua_pushcfunction(a1, (void*)&TimeTrial_SetEnabled, 0);
 	lua_setfield(a1, -10002, "TimeTrial_SetEnabled");
@@ -103,6 +118,12 @@ void CustomLUAFunctions(void* a1) {
 	lua_setfield(a1, -10002, "TimeTrial_SetCareerMode");
 	lua_pushcfunction(a1, (void*)&TimeTrial_SetCareerSuperAuthors, 0);
 	lua_setfield(a1, -10002, "TimeTrial_SetCareerSuperAuthors");
+	lua_pushcfunction(a1, (void*)&TimeTrial_GetLastEventGhostTime, 0);
+	lua_setfield(a1, -10002, "TimeTrial_GetLastEventGhostTime");
+	lua_pushcfunction(a1, (void*)&TimeTrial_IsLastEventGhostValid, 0);
+	lua_setfield(a1, -10002, "TimeTrial_IsLastEventGhostValid");
+	lua_pushcfunction(a1, (void*)&TimeTrial_GetLastEventPlayerTime, 0);
+	lua_setfield(a1, -10002, "TimeTrial_GetLastEventPlayerTime");
 	lua_pushcfunction(a1, (void*)&TimeTrial_WasLastRaceTimeTrial, 0);
 	lua_setfield(a1, -10002, "TimeTrial_WasLastRaceTimeTrial");
 }
