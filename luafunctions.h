@@ -67,8 +67,8 @@ int TimeTrial_SetCareerMode(void* a1) {
 }
 
 int TimeTrial_SetCareerSuperAuthors(void* a1) {
-	bDisplaySuperAuthorTime = luaL_checknumber(a1, 1);
-	bDisplayAuthorInCareer = luaL_checknumber(a1, 1);
+	bDisplaySuperAuthorTime = (int)luaL_checknumber(a1, 1) >= 1;
+	bDisplayAuthorInCareer = (int)luaL_checknumber(a1, 1) >= 2;
 	return 0;
 }
 
