@@ -93,6 +93,16 @@ int TimeTrial_GetLastEventPlayerTime(void* a1) {
 	return 1;
 }
 
+int TimeTrial_CheckCheatCode(void* a1) {
+	auto str = lua_tolstring(a1, 1, nullptr);
+	if (!wcscmp(str, L"ghosthunter")) {
+		bDisplayGhostsInCareer = true;
+		lua_pushboolean(a1, true);
+	}
+	else lua_pushboolean(a1, false);
+	return 1;
+}
+
 void CustomLUAFunctions(void* a1) {
 	lua_pushcfunction(a1, (void*)&TimeTrial_SetEnabled, 0);
 	lua_setfield(a1, -10002, "TimeTrial_SetEnabled");
@@ -126,6 +136,8 @@ void CustomLUAFunctions(void* a1) {
 	lua_setfield(a1, -10002, "TimeTrial_GetLastEventPlayerTime");
 	lua_pushcfunction(a1, (void*)&TimeTrial_WasLastRaceTimeTrial, 0);
 	lua_setfield(a1, -10002, "TimeTrial_WasLastRaceTimeTrial");
+	lua_pushcfunction(a1, (void*)&TimeTrial_CheckCheatCode, 0);
+	lua_setfield(a1, -10002, "TimeTrial_CheckCheatCode");
 }
 
 template<int id>
