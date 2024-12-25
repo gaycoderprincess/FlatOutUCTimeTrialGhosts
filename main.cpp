@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <d3d9.h>
+#include <filesystem>
 #include "toml++/toml.hpp"
 
 #include "nya_dx9_hookbase.h"
@@ -7,6 +8,7 @@
 #include "nya_commonhooklib.h"
 
 #include "fouc.h"
+#include "fo2versioncheck.h"
 #include "chloemenulib.h"
 
 uintptr_t pControllerVTable = 0x6F403C;
@@ -339,11 +341,7 @@ void TimeTrialMenu() {
 BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 	switch( fdwReason ) {
 		case DLL_PROCESS_ATTACH: {
-			if (NyaHookLib::GetEntryPoint() != 0x24CEF7) {
-				MessageBoxA(nullptr, aFOUCVersionFail, "nya?!~", MB_ICONERROR);
-				exit(0);
-				return TRUE;
-			}
+			DoFlatOutVersionCheck(FO2Version::FOUC_GFWL);
 
 			if (bShowInputsWhileDriving || bViewReplayMode || bPBTimeDisplayEnabled || bCurrentSessionPBTimeDisplayEnabled) {
 				NyaFO2Hooks::PlaceD3DHooks();
