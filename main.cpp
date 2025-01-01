@@ -291,6 +291,10 @@ void TimeTrialMenu() {
 		}
 	}
 
+	if (DrawMenuOption(std::format("Show Inputs While Driving - {}", bShowInputsWhileDriving), "", false, false)) {
+		bShowInputsWhileDriving = !bShowInputsWhileDriving;
+	}
+
 	if (bChloeCollectionIntegration) {
 		if (DrawMenuOption(std::format("Show Career Ghosts - {}", bDisplayGhostsInCareer), "", false, false)) {
 			bDisplayGhostsInCareer = !bDisplayGhostsInCareer;
@@ -359,6 +363,15 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 
 				auto config = toml::parse_file("FlatOutUCTimeTrialGhosts_gcp.toml");
 				bReplayIgnoreMismatches = config["main"]["load_mismatched_replays"].value_or(false);
+				bShowInputsWhileDriving = config["extras"]["always_show_input_display"].value_or(false);
+				gInputRGBHighlight.r = config["input_display"]["highlight_r"].value_or(0);
+				gInputRGBHighlight.g = config["input_display"]["highlight_g"].value_or(255);
+				gInputRGBHighlight.b = config["input_display"]["highlight_b"].value_or(0);
+				gInputRGBBackground.r = config["input_display"]["background_r"].value_or(200);
+				gInputRGBBackground.g = config["input_display"]["background_g"].value_or(200);
+				gInputRGBBackground.b = config["input_display"]["background_b"].value_or(200);
+				fInputBaseXPosition = config["input_display"]["pos_x"].value_or(0.2);
+				fInputBaseYPosition = config["input_display"]["pos_y"].value_or(0.85);
 			}
 			else {
 				InitStandalone();

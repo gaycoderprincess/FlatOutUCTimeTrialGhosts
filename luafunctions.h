@@ -98,9 +98,9 @@ int TimeTrial_CheckCheatCode(void* a1) {
 	if (!wcscmp(str, L"ghosthunter")) {
 		bDisplayGhostsInCareer = true;
 		lua_pushboolean(a1, true);
+		return 1;
 	}
-	else lua_pushboolean(a1, false);
-	return 1;
+	return 0;
 }
 
 void CustomLUAFunctions(void* a1) {
@@ -152,7 +152,7 @@ int __cdecl GetTotalTime(wchar_t* str, size_t len, void* a3, void* a4) {
 	auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
 	auto time = ply->nRaceTime;
 	if (time < 0) time = 0;
-	if (score->nCurrentLap >= pGameFlow->nNumLaps) {
+	if (score->nCurrentLap >= pScoreManager->nNumLaps) {
 		time = score->nLapTimes[score->nCurrentLap];
 	}
 
