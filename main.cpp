@@ -22,6 +22,16 @@ void SetGhostVisuals(bool on) {
 
 void UninitTimeTrials();
 
+void DisableProps() {
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x58C1FD, 0x58C28C);
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x58B9FC, 0x58BAA0);
+}
+
+void EnableProps() {
+	NyaHookLib::Patch<uint64_t>(0x58C1FD, 0x558B00000089840F);
+	NyaHookLib::Patch<uint64_t>(0x58B9FC, 0x4C8B0000009E840F);
+}
+
 #include "timetrialshared.h"
 
 uintptr_t ProcessGhostCarsASM_call = 0x478CF0;
@@ -202,16 +212,6 @@ void InitTimeTrials() {
 	SetGhostVisuals(nGhostVisuals);
 }
 
-void DisableProps() {
-	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x58C1FD, 0x58C28C);
-	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x58B9FC, 0x58BAA0);
-}
-
-void EnableProps() {
-	NyaHookLib::Patch<uint64_t>(0x58C1FD, 0x558B00000089840F);
-	NyaHookLib::Patch<uint64_t>(0x58B9FC, 0x4C8B0000009E840F);
-}
-
 void UninitTimeTrials() {
 	// revert ai name
 	if (!bChloeCollectionIntegration) NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x469459, 0x467770);
@@ -258,88 +258,6 @@ void InitStandalone() {
 		bCurrentSessionPBTimeDisplayEnabled = false;
 		bViewReplayMode = false;
 	}
-}
-
-void TimeTrialMenu() {
-	ChloeMenuLib::BeginMenu();
-
-	if (DrawMenuOption(std::format("PB Display - {}", bPBTimeDisplayEnabled), "", false, false)) {
-		bPBTimeDisplayEnabled = !bPBTimeDisplayEnabled;
-	}
-
-	if (DrawMenuOption(std::format("Session PB Display - {}", bCurrentSessionPBTimeDisplayEnabled), "", false, false)) {
-		bCurrentSessionPBTimeDisplayEnabled = !bCurrentSessionPBTimeDisplayEnabled;
-	}
-
-	if (DrawMenuOption(std::format("Load Mismatched Replays - {}", bReplayIgnoreMismatches), "", false, false)) {
-		bReplayIgnoreMismatches = !bReplayIgnoreMismatches;
-	}
-
-	const char* aGhostVisualNames[] = {
-			"Off",
-			"On",
-			"Proximity"
-	};
-	if (DrawMenuOption(std::format("Ghost Visuals < {} >", aGhostVisualNames[nGhostVisuals]), "", false, false, true)) {
-		if (auto lr = ChloeMenuLib::GetMoveLR()) {
-			nGhostVisuals += lr;
-			if (nGhostVisuals < 0) nGhostVisuals = 2;
-			if (nGhostVisuals > 2) nGhostVisuals = 0;
-			if (pGameFlow->nGameState == GAME_STATE_RACE && bTimeTrialsEnabled) {
-				SetGhostVisuals(nGhostVisuals);
-			}
-		}
-	}
-
-	if (DrawMenuOption(std::format("Show Inputs While Driving - {}", bShowInputsWhileDriving), "", false, false)) {
-		bShowInputsWhileDriving = !bShowInputsWhileDriving;
-	}
-
-	if (bChloeCollectionIntegration) {
-		if (DrawMenuOption(std::format("Show Career Ghosts - {}", bDisplayGhostsInCareer), "", false, false)) {
-			bDisplayGhostsInCareer = !bDisplayGhostsInCareer;
-		}
-		//if (DrawMenuOption(std::format("Show Career Author Ghost - {}", bDisplayAuthorInCareer), "", false, false)) {
-		//	bDisplayAuthorInCareer = !bDisplayAuthorInCareer;
-		//}
-	}
-
-	if (pGameFlow->nGameState != GAME_STATE_RACE) {
-		if (DrawMenuOption(std::format("Replay Viewer - {}", bViewReplayMode), "", false, false)) {
-			bViewReplayMode = !bViewReplayMode;
-		}
-
-		if (!bChloeCollectionIntegration) {
-			const char* aNitroNames[] = {
-					"0x",
-					"1x",
-					"2x",
-					"Infinite"
-			};
-			if (DrawMenuOption(std::format("Nitro < {} >", aNitroNames[nNitroType]), "", false, false, true)) {
-				if (auto lr = ChloeMenuLib::GetMoveLR()) {
-					nNitroType += lr;
-					if (nNitroType < 0) nNitroType = NITRO_INFINITE;
-					if (nNitroType > NITRO_INFINITE) nNitroType = 0;
-				}
-			}
-
-			if (DrawMenuOption(std::format("Props - {}", bNoProps), "", false, false)) {
-				if (bNoProps = !bNoProps) {
-					DisableProps();
-				}
-				else {
-					EnableProps();
-				}
-			}
-
-			if (DrawMenuOption(std::format("Three Lap Mode - {}", b3LapMode), "", false, false)) {
-				b3LapMode = !b3LapMode;
-			}
-		}
-	}
-
-	ChloeMenuLib::EndMenu();
 }
 
 BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
