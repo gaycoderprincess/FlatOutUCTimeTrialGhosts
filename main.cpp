@@ -196,10 +196,13 @@ void InitTimeTrials() {
 
 	int numOpponents = 2;
 	if (bIsCareerMode) numOpponents = bDisplayAuthorInCareer ? 5 : 3;
+	if (bIsCareerRallyMode) numOpponents = nNumCareerRallyOpponents;
 
-	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x469459, &GetAINameASM);
+	if (!bIsCareerRallyMode) {
+		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x469459, &GetAINameASM);
+		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x409302, &AISameCarASM);
+	}
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x492A9F, &FinishLapASM);
-	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x409302, &AISameCarASM);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4696C8, &GetPlayerCarASM);
 	NyaHookLib::Patch<uint8_t>(0x46828E + 1, numOpponents); // only spawn two ai
 	NyaHookLib::Patch<uint8_t>(0x46829F + 1, numOpponents); // only spawn two ai

@@ -66,6 +66,24 @@ int TimeTrial_SetCareerMode(void* a1) {
 	return 0;
 }
 
+int TimeTrial_SetCareerRallyMode(void* a1) {
+	bIsCareerRallyMode = luaL_checknumber(a1, 1);
+	if (bIsCareerRallyMode) {
+		RerollRallyTimescales();
+	}
+	return 0;
+}
+
+int TimeTrial_SetCareerRallyClass(void* a1) {
+	nCareerRallyClass = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int TimeTrial_SetCareerRallyDifficulty(void* a1) {
+	nCareerRallyDifficulty = luaL_checknumber(a1, 1);
+	return 0;
+}
+
 int TimeTrial_SetCareerSuperAuthors(void* a1) {
 	bDisplaySuperAuthorTime = (int)luaL_checknumber(a1, 1) >= 1;
 	bDisplayAuthorInCareer = (int)luaL_checknumber(a1, 1) >= 2;
@@ -126,6 +144,12 @@ void CustomLUAFunctions(void* a1) {
 	lua_setfield(a1, -10002, "TimeTrial_GetNitroType");
 	lua_pushcfunction(a1, (void*)&TimeTrial_SetCareerMode, 0);
 	lua_setfield(a1, -10002, "TimeTrial_SetCareerMode");
+	lua_pushcfunction(a1, (void*)&TimeTrial_SetCareerRallyMode, 0);
+	lua_setfield(a1, -10002, "TimeTrial_SetCareerRallyMode");
+	lua_pushcfunction(a1, (void*)&TimeTrial_SetCareerRallyClass, 0);
+	lua_setfield(a1, -10002, "TimeTrial_SetCareerRallyClass");
+	lua_pushcfunction(a1, (void*)&TimeTrial_SetCareerRallyDifficulty, 0);
+	lua_setfield(a1, -10002, "TimeTrial_SetCareerRallyDifficulty");
 	lua_pushcfunction(a1, (void*)&TimeTrial_SetCareerSuperAuthors, 0);
 	lua_setfield(a1, -10002, "TimeTrial_SetCareerSuperAuthors");
 	lua_pushcfunction(a1, (void*)&TimeTrial_GetLastEventGhostTime, 0);
