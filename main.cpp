@@ -201,15 +201,15 @@ void InitTimeTrials() {
 	if (!bIsCareerRallyMode) {
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x469459, &GetAINameASM);
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x409302, &AISameCarASM);
+		NyaHookLib::Patch<uint8_t>(0x43407E, 0xEB); // use regular skins for ai
+		NyaHookLib::Patch<uint8_t>(0x432CF5, 0xEB); // use regular skins for ai
+		NyaHookLib::Patch<uint8_t>(0x432D6E, 0xEB); // use regular skins for ai
+		NyaHookLib::Patch<uint8_t>(0x433EA2, 0xEB); // use regular skins for ai
 	}
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x492A9F, &FinishLapASM);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4696C8, &GetPlayerCarASM);
 	NyaHookLib::Patch<uint8_t>(0x46828E + 1, numOpponents); // only spawn two ai
 	NyaHookLib::Patch<uint8_t>(0x46829F + 1, numOpponents); // only spawn two ai
-	NyaHookLib::Patch<uint8_t>(0x43407E, 0xEB); // use regular skins for ai
-	NyaHookLib::Patch<uint8_t>(0x432CF5, 0xEB); // use regular skins for ai
-	NyaHookLib::Patch<uint8_t>(0x432D6E, 0xEB); // use regular skins for ai
-	NyaHookLib::Patch<uint8_t>(0x433EA2, 0xEB); // use regular skins for ai
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x409D90, 0x40A6BE); // disable ai control
 
 	SetGhostVisuals(nGhostVisuals);
