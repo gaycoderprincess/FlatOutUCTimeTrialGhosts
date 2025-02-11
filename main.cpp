@@ -90,12 +90,11 @@ void __attribute__((naked)) GetPlayerCarASM() {
 }
 
 int GetNumSkinsForCar(int dbCar) {
-	int tmp[2];
 	auto path = "data/cars/car_" + std::to_string(GetCarDataPath(dbCar, false)) + "/skin";
 	int i;
 	for (i = 0; i < 255; i++) {
 		auto file = (path + std::to_string(i+1) + ".dds");
-		if (!BFSManager_DoesFileExist(*(void**)0x846688, file.c_str(), tmp)) {
+		if (!DoesFileExist(file.c_str(), 0)) {
 			break;
 		}
 	}
