@@ -51,6 +51,11 @@ int TimeTrial_SetHandlingMode(void* a1) {
 	return 0;
 }
 
+int TimeTrial_SetIsFO2Track(void* a1) {
+	bIsFO2Track = luaL_checknumber(a1, 1);
+	return 0;
+}
+
 int TimeTrial_GetPropsEnabled(void* a1) {
 	lua_pushnumber(a1, !bNoProps);
 	return 1;
@@ -138,6 +143,8 @@ void CustomLUAFunctions(void* a1) {
 	lua_setfield(a1, -10002, "TimeTrial_SetUpgradeLevel");
 	lua_pushcfunction(a1, (void*)&TimeTrial_SetHandlingMode, 0);
 	lua_setfield(a1, -10002, "TimeTrial_SetHandlingMode");
+	lua_pushcfunction(a1, (void*)&TimeTrial_SetIsFO2Track, 0);
+	lua_setfield(a1, -10002, "TimeTrial_SetIsFO2Track");
 	lua_pushcfunction(a1, (void*)&TimeTrial_GetPropsEnabled, 0);
 	lua_setfield(a1, -10002, "TimeTrial_GetPropsEnabled");
 	lua_pushcfunction(a1, (void*)&TimeTrial_GetNitroType, 0);
